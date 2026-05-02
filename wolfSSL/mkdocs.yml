@@ -141,8 +141,16 @@ nav:
     - "D. SSL/TLS Overview": appendix04.md
     - "E. RFCs, Specifications, and Reference": appendix05.md
     - "F. Error Codes": appendix06.md
+<<<<<<< HEAD
     - "G. Experimenting with Post-Quantum Cryptography": appendix07.md
     - "H. wolfSSL Porting Guide": appendix08.md
+=======
+    - "G. Supported Cipher Suites, Key Exchange Groups, and Signature Algorithms": appendix07.md
+    - "H. Hardware Optimization Support": appendix08.md
+    - "I. Experimenting with Post-Quantum Cryptography": appendix09.md
+    - "J. wolfSSL Porting Guide": appendix10.md
+    - "K. wolfSM (ShangMi)": appendix11.md
+>>>>>>> 5d885e1... Appendix Hardware optimization
 theme:
   name: null
   custom_dir: ../mkdocs-material/material
