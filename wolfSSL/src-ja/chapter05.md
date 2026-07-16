@@ -49,7 +49,7 @@ wolfSSLは`string.h`の`memcpy()`、`memset()`、`memcmp()`などのように動
 マクロを避けたい場合、次のように示すこともできます。
 
 ```c
-external void* my_memcpy(void* d, const void* s, size_t n);
+extern void* my_memcpy(void* d, const void* s, size_t n);
 ```
 
 #### math.h

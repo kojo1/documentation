@@ -195,7 +195,7 @@ Bが有効であれば、それを使用してCを検証します。
 wolfSSLには、サーバー証明書のドメインを自動的にチェックするクライアント拡張機能があります。
 OpenSSLモードでは、これを実行するために約十個の関数呼び出しが必要です。
 wolfSSLは証明書の日付が範囲内であることをチェックし、署名を検証し、さらに[`wolfSSL_connect()`](group__IO.md#function-wolfssl_connect)を呼び出す前に[`wolfSSL_check_domain_name(WOLFSSL* ssl, const char* dn)`](group__Setup.md#function-wolfssl_check_domain_name)を呼び出した場合にドメインを検証します。
-wolfSSLはピアのサーバー証明書のX.509発行者名を`dn`（期待されるドメイン名）と照合します。
+wolfSSLはピアのサーバー証明書のX.509サブジェクト名を`dn`（期待されるドメイン名）と照合します。
 名前が一致すれば[`wolfSSL_connect()`](group__IO.md#function-wolfssl_connect)は正常に進行しますが、名前が一致しない場合、[`wolfSSL_connect()`](group__IO.md#function-wolfssl_connect)は致命的なエラーを返し、[`wolfSSL_get_error()`](group__Debug.md#function-wolfssl_get_error)は`DOMAIN_NAME_MISMATCH`を返します。
 
 証明書のドメイン名をチェックすることは、サーバーが実際に名乗っているものと一致していることを検証する重要なステップです。
@@ -244,7 +244,7 @@ wolfSSLは、最大4096ビットのさまざまな長さのRSA鍵生成をサポ
 鍵の作成は簡単で、`rsa.h`から1つの関数のみを使用します。
 
 ```c
-int MakeRsaKey(RsaKey* key, int size, long e, RNG* rng);
+int wc_MakeRsaKey(RsaKey* key, int size, long e, RNG* rng);
 ```
 
 ここで`size`はビット単位の長さ、`e`は公開指数で、通常`e`には65537を使用するのが良いでしょう。
@@ -255,21 +255,21 @@ RsaKey genKey;
 RNG    rng;
 int    ret;
 
-InitRng(&rng);
-InitRsaKey(&genKey, 0);
+wc_InitRng(&rng);
+wc_InitRsaKey(&genKey, 0);
 
-ret = MakeRsaKey(&genKey, 1024, 65537, &rng);
+ret = wc_MakeRsaKey(&genKey, 1024, 65537, &rng);
 if (ret != 0)
     /* ret contains error */;
 ```
 
 RsaKey `genKey`は、他のRsaKeyと同じように使用できます。
 鍵をエクスポートする必要がある場合、wolfSSLは`asn.h`でDERとPEMの両方のフォーマットを提供しています。
-いずれの場合も、まずは鍵をDERフォーマットに変換し、PEMが必要であれば汎用の`DerToPem()`関数を次のように使用します。
+いずれの場合も、まずは鍵をDERフォーマットに変換し、PEMが必要であれば汎用の`wc_DerToPem()`関数を次のように使用します。
 
 ```c
 byte der[4096];
-int  derSz = RsaKeyToDer(&genKey, der, sizeof(der));
+int  derSz = wc_RsaKeyToDer(&genKey, der, sizeof(der));
 if (derSz < 0)
     /* derSz contains error */;
 ```
@@ -279,7 +279,7 @@ DERバッファをPEMに変換するには、変換関数を使用します。
 
 ```c
 byte pem[4096];
-int  pemSz = DerToPem(der, derSz, pem, sizeof(pem),
+int  pemSz = wc_DerToPem(der, derSz, pem, sizeof(pem),
                       PRIVATEKEY_TYPE);
 if (pemSz < 0)
     /* pemSz contains error */;
@@ -315,7 +315,7 @@ RSA秘密鍵には公開鍵も含まれています。
 `test.c`で使用されているように、秘密鍵はwolfSSLによって秘密鍵と公開鍵の両方として使用できます。
 通常、SSL/TLSに必要なのは秘密鍵と（証明書の形式の）公開鍵のみです。
 
-必要に応じて、`RsaPublicKeyDecode()`関数を使用して別の公開鍵をwolfSSLに手動で読み込むこともできます。
+必要に応じて、`wc_RsaPublicKeyDecode()`関数を使用して別の公開鍵をwolfSSLに手動で読み込むこともできます。
 そして、[`wc_RsaKeyToPublicDer()`](group__RSA.md#function-wc_rsakeytopublicder)関数を使用してRSA公開鍵をエクスポートすることもできます。
 
 ## 証明書生成
@@ -367,7 +367,7 @@ char country[CTC_NAME_SIZE];
 
 ```c
 Cert myCert;
-InitCert(&myCert);
+wc_InitCert(&myCert);
 ```
 
 `InitCert()`は、いくつかの変数にデフォルト値を設定します。
@@ -407,18 +407,18 @@ strncpy(myCert.subject.email, "facts@wolfssl.com", CTC_NAME_SIZE);
 ```c
 byte derCert[4096];
 
-int certSz = MakeSelfCert(&myCert, derCert, sizeof(derCert), &key, &rng);
+int certSz = wc_MakeSelfCert(&myCert, derCert, sizeof(derCert), &key, &rng);
 if (certSz < 0)
   /* certSz contains the error */;
 ```
 
 バッファ`derCert`にはDERフォーマットの証明書が含まれています。
-証明書のPEMフォーマットが必要な場合は、汎用の`DerToPem()`関数を使用して、タイプを`CERT_TYPE`として指定します。
+証明書のPEMフォーマットが必要な場合は、汎用の`wc_DerToPem()`関数を使用して、タイプを`CERT_TYPE`として指定します。
 
 ```c
 byte* pem;
 
-int pemSz = DerToPem(derCert, certSz, pem, sizeof(pemCert), CERT_TYPE);
+int pemSz = wc_DerToPem(derCert, certSz, pem, sizeof(pemCert), CERT_TYPE);
 if (pemCertSz < 0)
   /* pemCertSz contains error */;
 ```
@@ -449,27 +449,27 @@ if (pemCertSz < 0)
 
 CA署名付き証明書を作成したい場合は、いくつかの手順が必要です。
 前述のようにサブジェクト情報を入力した後、CA証明書から発行者情報を設定する必要があります。
-これは`SetIssuer()`を使用して次のように実行できます。
+これは`wc_SetIssuer()`を使用して次のように実行できます。
 
 ```c
-ret = SetIssuer(&myCert, "ca-cert.pem");
+ret = wc_SetIssuer(&myCert, "ca-cert.pem");
 if (ret < 0)
     /* ret contains error */;
 ```
 
 その後、証明書を作成し、それに署名する2段階のプロセスを実行する必要があります。
-（`MakeSelfCert()`は一度にこれら両方を実行します）
+（`wc_MakeSelfCert()`は一度にこれら両方を実行します）
 発行者（`caKey`）と対象（`key`）の両方の秘密鍵が必要です。
 完全な使用方法については、`test.c`の実装例をご参照ください。
 
 ```c
 byte derCert[4096];
 
-int certSz = MakeCert(&myCert, derCert, sizeof(derCert), &key, NULL, &rng);
+int certSz = wc_MakeCert(&myCert, derCert, sizeof(derCert), &key, NULL, &rng);
 if (certSz < 0);
    /*certSz contains the error*/;
 
-certSz = SignCert(myCert.bodySz, myCert.sigType, derCert,
+certSz = wc_SignCert(myCert.bodySz, myCert.sigType, derCert,
             sizeof(derCert), &caKey, NULL, &rng);
 if (certSz < 0);
    /*certSz contains the error*/;
@@ -494,7 +494,7 @@ CertとCertName構造体の詳細については本章の「証明書生成」�
 
 ```c
 Cert request;
-InitCert(&request);
+wc_InitCert(&request);
 ```
 
 `InitCert()`はいくつかの変数にデフォルト値を設定します。
@@ -573,7 +573,7 @@ CSRをwolfSSL解析エンジンに渡すと、現時点ではエラーが返さ�
 これを実行するには、指定された引数で次の関数を実行します。
 
 ```c
-EccKeyToDer(ecc_key*, byte* output, word32 inLen);
+wc_EccKeyToDer(ecc_key*, byte* output, word32 inLen);
 ```
 
 ### 実装例
@@ -583,5 +583,5 @@ EccKeyToDer(ecc_key*, byte* output, word32 inLen);
 byte  der[FOURK_BUF];
 ecc_key userB;
 
-EccKeyToDer(&userB, der, FOURK_BUF);
+wc_EccKeyToDer(&userB, der, FOURK_BUF);
 ```

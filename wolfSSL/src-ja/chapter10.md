@@ -405,7 +405,7 @@ byte publicKeyBuffer[]  = { /*holds the raw data from the key, maybe
                         from a file like RsaPublicKey.der*/ };
 word32 idx = 0;            /*where to start reading into the buffer*/
 
-RsaPublicKeyDecode(publicKeyBuffer, &idx, &rsaPublicKey, sizeof(publicKeyBuffer));
+wc_RsaPublicKeyDecode(publicKeyBuffer, &idx, &rsaPublicKey, sizeof(publicKeyBuffer));
 
 byte in[] = { /*plain text to encrypt*/ };
 byte out[128];
@@ -413,7 +413,7 @@ RNG rng;
 
 wc_InitRng(&rng);
 
-word32 outLen = RsaPublicEncrypt(in, sizeof(in), out, sizeof(out), &rsaPublicKey, &rng);
+word32 outLen = wc_RsaPublicEncrypt(in, sizeof(in), out, sizeof(out), &rsaPublicKey, &rng);
 ```
 
 これで`out`には、平文`in`からの暗号文が含まれます。
@@ -429,7 +429,7 @@ word32 outLen = RsaPublicEncrypt(in, sizeof(in), out, sizeof(out), &rsaPublicKey
 void wc_ErrorString(int error, char* buffer);
 ```
 
-バッファが少なくとも`MAX_ERROR_SZ`バイト（80）であることを確認してください。
+バッファが少なくとも`WOLFSSL_MAX_ERROR_SZ`バイト（80）であることを確認してください。
 
 続いて、`out`を復号します。
 
@@ -480,7 +480,7 @@ wc_InitDhKey(&dhPublicKey);
 byte publicKeyBuffer[] = { /*holds the raw data from the public key
                              parameters, maybe from a file like
                              dh1024.der*/ }
-wc_DhKeyDecode(tmp, &idx, &dhPublicKey, publicKeyBuffer);
+wc_DhKeyDecode(publicKeyBuffer, &idx, &dhPublicKey, sizeof(publicKeyBuffer));
 wc_InitRng(&rng);  /*Initialize random number generator*/
 ```
 

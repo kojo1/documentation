@@ -323,6 +323,8 @@ wolfSSLは、ユーザーと顧客がwolfSSLを新しい環境に移植するの
 
 サポートパッケージ:  [https://wolfssl.jp/license/support-packages/](https://wolfssl.jp/license/support-packages/)
 
+コンサルティングサービス: [https://www.wolfssl.com/wolfSSL/wolfssl-consulting.html](https://www.wolfssl.com/wolfSSL/wolfssl-consulting.html)
+
 お問い合わせ: [info@wolfssl.jp](mailto:info@wolfssl.jp)
 
 

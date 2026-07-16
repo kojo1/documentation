@@ -3,8 +3,8 @@
 ## オープンソース
 
 wolfSSL、wolfCrypt、wolfMQTT、wolfTPM、wolfBoot、wolfSentryは、無料でダウンロードできるソフトウェアです。
-ユーザーがGPLv2ライセンスに準拠する限り、ユーザーのニーズに合わせて変更を加えることができます。
-GPLv2ライセンスは、gnu.org のWebサイト (<https://www.gnu.org/licenses/old-licenses/gpl-2.0.html>) で確認できます。
+ユーザーがGPLv3ライセンスに準拠する限り、ユーザーのニーズに合わせて変更を加えることができます。
+GPLv3ライセンスは、gnu.org のWebサイト (<https://www.gnu.org/licenses/gpl.html>) で確認できます。
 
 wolfSSHは無料でダウンロードできるソフトウェアです。
 ユーザーがGPLv3ライセンスに準拠する限り、ユーザーのニーズに合わせて変更を加えることができます。

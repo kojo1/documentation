@@ -29,7 +29,7 @@ Kyberをベースとして標準化されました。
 これにより、従来型および量子コンピュータを用いた攻撃者の両方から保護できます。
 
 ML-DSA (Module Lattice Digital Signature Algorithm) は、同じくNISTが標準化した格子ベースの耐量子デジタル署名方式です。
-Kyberをベースとして標準化されました。
+Dilithiumをベースとして標準化されました。
 これにより、送信者はメッセージの送信元と完全性を証明する検証可能な署名を生成できます。
 
 ML-KEMとML-DSAはどちらも、暗号の復号に特化した量子コンピュータに耐性を持つように設計された公開鍵アルゴリズムです。
@@ -99,7 +99,7 @@ FIPS準拠を第一に考えると、NIST標準曲線を使用したECCは良い
 
 wolfSSLリポジトリの[INSTALLファイル](https://github.com/wolfSSL/wolfssl/blob/master/INSTALL) をご参照ください。
 
-項目15には、構成とビルドの方法に関する説明があります。
+項目15には、ML-KEMとML-DSAを有効にしてwolfSSLを構成およびビルドする方法に関する説明があります。
 
 ポスト量子暗号鍵と署名を使用して X.509 証明書を生成するには、パッチを適用した OQS OpenSSL Providerフォークが必要です。
 手順は <https://github.com/wolfSSL/osp/tree/master/oqs/README.md> にあります。
@@ -128,6 +128,27 @@ examples/client/client -v 4 -l TLS_AES_256_GCM_SHA384 \
 これで、対称暗号化にAES-256、認証にML-DSA署名スキーム、鍵確立にECDHEとML-KEMをハイブリッド化した完全な量子安全なTLS 1.3接続を実現しました。
 
 その他のポスト量子の例に関する詳細情報は <https://github.com/wolfSSL/wolfssl-examples/blob/master/pq/README.md> で確認できます。
+
+## ポスト量子アルゴリズムのバリアント名
+
+ポスト量子アルゴリズムのバリアント名:
+
+NISTセキュリティレベル |  PQCバリアント名
+--------------------  |  ---------------------------
+2                     |  `ML_DSA_44`
+3                     |  `ML_DSA_65`
+5                     |  `ML_DSA_87`
+1                     |  `ML_KEM_512`
+3                     |  `ML_KEM_768`
+5                     |  `ML_KEM_1024`
+
+ポスト量子ハイブリッドKEM名:
+
+wolfSSLバリアント名    |  NIST ECC曲線とPQC提出時のバリアント名
+--------------------  |  ----------------------------------------------
+`SecP256r1MLKEM512`   |  ECDSA P-256 および KYBER512
+`SecP384r1MLKEM768`   |  ECDSA P-384 および KYBER768
+`SecP521r1MLKEM1024`  |  ECDSA P-521 および KYBER1024
 
 ## 暗号アーティファクトのサイズ
 
@@ -185,9 +206,9 @@ TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | ECC SECP256R1         | 5455
 TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | ML_KEM_512            | 6633
 TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | ML_KEM_768            | 7337
 TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | ML_KEM_1024           | 8201
-TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | P256_ML_KEM_512       | 6763
-TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | P384_ML_KEM_768       | 7531
-TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | P521_ML_KEM_1024      | 8467
+TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | SecP256r1MLKEM512     | 6763
+TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | SecP384r1MLKEM768     | 7531
+TLS_AES_256_GCM_SHA384 | RSA 2048ビット        | SecP521r1MLKEM1024    | 8467
 TLS_AES_256_GCM_SHA384 | ML_DSA_44            | ECC SECP256R1         | 7918
 TLS_AES_256_GCM_SHA384 | ML_DSA_65            | ECC SECP256R1         | 10233
 TLS_AES_256_GCM_SHA384 | ML_DSA_87            | ECC SECP256R1         | 13477
@@ -558,6 +579,7 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group ECC_SECP256R1:
         Tx          :   384.903 MB/s
         Connect     :    48.343 ms
         Connect Avg :     2.014 ms
+
 wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ECC_SECP256R1:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -577,6 +599,7 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group ECC_SECP384R1:
         Tx          :   383.617 MB/s
         Connect     :    56.255 ms
         Connect Avg :     2.344 ms
+
 wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ECC_SECP384R1:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -596,6 +619,7 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group ECC_SECP521R1:
         Tx          :   348.596 MB/s
         Connect     :    61.261 ms
         Connect Avg :     2.664 ms
+
 wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ECC_SECP521R1:
         Total       :   5767168 bytes
         Num Conns   :        23
@@ -615,6 +639,7 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_512:
         Tx          :   517.005 MB/s
         Connect     :    50.177 ms
         Connect Avg :     2.091 ms
+
 wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_512:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -634,6 +659,7 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_768:
         Tx          :   488.757 MB/s
         Connect     :    51.283 ms
         Connect Avg :     2.137 ms
+
 wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_768:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -653,6 +679,7 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_1024:
         Tx          :   394.150 MB/s
         Connect     :    51.750 ms
         Connect Avg :     2.156 ms
+
 wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_1024:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -663,7 +690,7 @@ wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group ML_KEM_1024:
         Connect     :    50.328 ms
         Connect Avg :     2.097 ms
 
-wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group P256_ML_KEM_512:
+wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group SecP256r1MLKEM512:
         Total       :   6029312 bytes
         Num Conns   :        24
         Rx Total    :   961.483 ms
@@ -672,7 +699,8 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group P256_ML_KEM_512:
         Tx          :   386.966 MB/s
         Connect     :    55.885 ms
         Connect Avg :     2.329 ms
-wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group P256_ML_KEM_512:
+
+wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group SecP256r1MLKEM512:
         Total       :   6029312 bytes
         Num Conns   :        24
         Rx Total    :   963.042 ms
@@ -682,7 +710,7 @@ wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group P256_ML_KEM_512:
         Connect     :    53.236 ms
         Connect Avg :     2.218 ms
 
-wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group P384_ML_KEM_768:
+wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group SecP384r1MLKEM768:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   927.519 ms
@@ -691,7 +719,8 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group P384_ML_KEM_768:
         Tx          :   374.747 MB/s
         Connect     :    64.464 ms
         Connect Avg :     2.803 ms
-wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group P384_ML_KEM_768:
+
+wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group SecP384r1MLKEM768:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   929.281 ms
@@ -701,7 +730,7 @@ wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group P384_ML_KEM_768:
         Connect     :    60.200 ms
         Connect Avg :     2.617 ms
 
-wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group P521_ML_KEM_1024:
+wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group SecP521r1MLKEM1024:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   918.122 ms
@@ -710,7 +739,8 @@ wolfSSL Server Benchmark on TLS13-AES128-GCM-SHA256 with group P521_ML_KEM_1024:
         Tx          :   361.941 MB/s
         Connect     :    79.426 ms
         Connect Avg :     3.453 ms
-wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group P521_ML_KEM_1024:
+
+wolfSSL Client Benchmark on TLS13-AES128-GCM-SHA256 with group SecP521r1MLKEM1024:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   919.900 ms
@@ -729,6 +759,7 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group ECC_SECP256R1:
         Tx          :   449.663 MB/s
         Connect     :    52.042 ms
         Connect Avg :     2.168 ms
+
 wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ECC_SECP256R1:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -749,6 +780,7 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group ECC_SECP384R1:
         Tx          :   339.929 MB/s
         Connect     :    56.135 ms
         Connect Avg :     2.339 ms
+        
 wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ECC_SECP384R1:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -768,6 +800,7 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group ECC_SECP521R1:
         Tx          :   350.364 MB/s
         Connect     :    62.644 ms
         Connect Avg :     2.724 ms
+
 wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ECC_SECP521R1:
         Total       :   5767168 bytes
         Num Conns   :        23
@@ -787,6 +820,7 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_512:
         Tx          :   351.021 MB/s
         Connect     :    49.608 ms
         Connect Avg :     2.067 ms
+
 wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_512:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -806,6 +840,7 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_768:
         Tx          :   355.041 MB/s
         Connect     :    51.284 ms
         Connect Avg :     2.137 ms
+
 wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_768:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -825,6 +860,7 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_1024:
         Tx          :   366.959 MB/s
         Connect     :    52.259 ms
         Connect Avg :     2.177 ms
+
 wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_1024:
         Total       :   6029312 bytes
         Num Conns   :        24
@@ -835,7 +871,7 @@ wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group ML_KEM_1024:
         Connect     :    50.758 ms
         Connect Avg :     2.115 ms
 
-wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group P256_ML_KEM_512:
+wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group SecP256r1MLKEM512:
         Total       :   6029312 bytes
         Num Conns   :        24
         Rx Total    :   971.832 ms
@@ -844,7 +880,8 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group P256_ML_KEM_512:
         Tx          :   381.096 MB/s
         Connect     :    54.727 ms
         Connect Avg :     2.280 ms
-wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group P256_ML_KEM_512:
+
+wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group SecP256r1MLKEM512:
         Total       :   6029312 bytes
         Num Conns   :        24
         Rx Total    :   972.623 ms
@@ -854,7 +891,7 @@ wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group P256_ML_KEM_512:
         Connect     :    52.613 ms
         Connect Avg :     2.192 ms
 
-wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group P384_ML_KEM_768:
+wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group SecP384r1MLKEM768:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   921.217 ms
@@ -863,7 +900,8 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group P384_ML_KEM_768:
         Tx          :   355.285 MB/s
         Connect     :    69.367 ms
         Connect Avg :     3.016 ms
-wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group P384_ML_KEM_768:
+
+wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group SecP384r1MLKEM768:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   923.622 ms
@@ -873,7 +911,7 @@ wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group P384_ML_KEM_768:
         Connect     :    63.739 ms
         Connect Avg :     2.771 ms
 
-wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group P521_ML_KEM_1024:
+wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group SecP521r1MLKEM1024:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   920.447 ms
@@ -882,7 +920,8 @@ wolfSSL Server Benchmark on TLS13-AES256-GCM-SHA384 with group P521_ML_KEM_1024:
         Tx          :   355.548 MB/s
         Connect     :    78.446 ms
         Connect Avg :     3.411 ms
-wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group P521_ML_KEM_1024:
+
+wolfSSL Client Benchmark on TLS13-AES256-GCM-SHA384 with group SecP521r1MLKEM1024:
         Total       :   5767168 bytes
         Num Conns   :        23
         Rx Total    :   921.889 ms

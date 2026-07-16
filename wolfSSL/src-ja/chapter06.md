@@ -173,7 +173,7 @@ typedef int (*CallbackDhAgree)(WOLFSSL* ssl, struct DhKey* key,
 コールバックの実装例は`wolfssl/test.h`の`myDhCallback()`で提供しています。
 使用例はwolfSSLのクライアントサンプルプログラム（`examples/client/client.c`）で見ることができます。
 
-DHコールバックを使用するには、wolfSSLを`HAVE_DH`を定義してコンパイルする必要があります。
+DHコールバックを使用するには、wolfSSLを`HAVE_PK_CALLBACKS`と`HAVE_DH`を定義してコンパイルする必要があります。
 
 ### Ed25519コールバック
 
@@ -377,9 +377,6 @@ typedef int (*CallbackRsaPssSignCheck)(WOLFSSL* ssl,
 * `wolfSSL_SetRsaPssVerifyCtx()`
 * `wolfSSL_SetRsaSignCheckCtx()`
 * `wolfSSL_SetRsaPssSignCheckCtx()`
-
-コールバックの例は`wolfssl/test.h`の`myRsaPssSign()`、`myRsaPssVerify()`、および`myRsaPssSignCheck()`にあります。
-使用例はwolfSSL例のクライアントで見ることができます。
 
 コールバックの実装例は`wolfssl/test.h`の`myRsaPssSign()`、`myRsaPssVerify()`、`myRsaPssSignCheck()`で提供しています。
 使用例はwolfSSLのクライアントサンプルプログラム（`examples/client/client.c`）で見ることができます。
